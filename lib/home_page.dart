@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database_demo/main.dart';
+import 'package:firebase_database_demo/news_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -46,6 +47,19 @@ class _HomePageState extends State<HomePage> {
               "Flutter x Firebase",
               style: TextStyle(fontSize: 48.0, fontWeight: FontWeight.bold),
             ),
+            ElevatedButton(
+              onPressed: () {
+                // 進入 news_page.dart
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NewsPage()),
+                );
+              },
+              child: const Text("進入"),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
             Wrap(
               children: [
                 Text("版本： $_version"),
@@ -62,7 +76,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           _increaseCounter();
         },
-        child: Text("自主\n增加"),
+        child: const Text("自主\n增加"),
       ),
     );
   }

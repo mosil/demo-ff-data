@@ -205,7 +205,7 @@ Demo of firebase
        flutter pub add firebase_database
        ```
 
-###### B. `home_page.dart`
+###### B. 程式碼變動：`home_page.dart`
 
 1. 取出資料
     - 加入 `_getCounterFromRealtimeDatabase`
@@ -242,3 +242,21 @@ Demo of firebase
          ref.child("counter").update({"counter": _counter});
        });
        ``` 
+
+#### 3.4 使用 Firestore
+
+#### 3.4.1 Firebase 的設定
+1. 建立資料庫
+    - 「位置」選擇離服務當地最近者。
+    - 要注意設定後無法變更。
+2. 注意一下「規則」
+
+#### 3.4.2 Flutter 的程式碼變動
+###### A. 專案環境更新
+-  為專案加入 `cloud_firestore`
+    - 指令
+       ```shell
+       flutter pub add cloud_firestore
+       ```
+
+###### B. 程式碼變動：`home_page.dart`
