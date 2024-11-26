@@ -241,4 +241,22 @@ Demo of firebase
          DatabaseReference ref = FirebaseDatabase.instance.ref();
          ref.child("counter").update({"counter": _counter});
        });
-       ``` 
+       ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
