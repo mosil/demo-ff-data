@@ -8,9 +8,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final String _version = "0.0.1";
+  String _version = "0.0.1";
 
   int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 在這邊加入 RemoteConfig 相關程式碼
+  }
 
   @override
   Widget build(BuildContext context) {
