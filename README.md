@@ -240,7 +240,7 @@ Demo of firebase
          });
          // 加入更新
          DatabaseReference ref = FirebaseDatabase.instance.ref();
-         ref.child("counter").update({"counter": _counter});
+         ref.update({"counter": _counter});
        });
        ``` 
 
