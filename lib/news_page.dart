@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database_demo/news.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class _NewsPageState extends State<NewsPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   List<News> _list = [];
 
   @override
@@ -22,11 +24,17 @@ class _NewsPageState extends State<NewsPage> {
 
   _initialNewsList() {
     _list = [];
-    for (int i = 0; i < 10; i++) {
-      setState(() {
-        _list.add(News(title: "title$i", context: "context$i"));
-      });
-    }
+
+    final collectionRef = _db.collection("news");
+    collectionRef.orderBy("title", descending: true).get().then((querySnapshot) {
+      for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
+        Map<String, dynamic> snapshot = docSnapshot.data() as Map<String, dynamic>;
+        final News news = News(title: snapshot["title"] ?? "", context: snapshot["content"]);
+        setState(() {
+          _list.add(news);
+        });
+      }
+    });
   }
 
   @override
@@ -88,5 +96,18 @@ class _NewsPageState extends State<NewsPage> {
 
   _createPost() {
     // 新增一筆資料
+    if (_titleController.text.isEmpty && _contentController.text.isEmpty) {
+      return;
+    }
+    final News news = News(title: _titleController.text, context: _contentController.text);
+    final collectionRef = _db.collection("news");
+    int id = _list.length + 1;
+    collectionRef.doc(id.toString()).set({"title": news.title, "content": news.context}).then((value) {
+      setState(() {
+        _list.insert(0, news);
+      });
+    }).catchError((error) {
+      print(error.toString());
+    });
   }
 }
