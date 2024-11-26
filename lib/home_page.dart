@@ -1,3 +1,4 @@
+import 'package:firebase_database/main.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -8,9 +9,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final String _version = "0.0.1";
+  String _version = "0.0.1";
 
   int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _version = remoteConfig.getString("version");
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
