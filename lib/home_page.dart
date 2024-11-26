@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database_demo/main.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,18 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _version = remoteConfig.getString("version");
       });
+      _getCounterFromRealtimeDatabase();
     });
+  }
+
+  _getCounterFromRealtimeDatabase() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
+    final snapshot = await ref.child("counter").get();
+    if (snapshot.exists) {
+      setState(() {
+        _counter = snapshot.value as int;
+      });
+    }
   }
 
   @override
@@ -59,5 +71,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _counter++;
     });
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
+    ref.child("counter").update({"counter": _counter});
   }
 }
