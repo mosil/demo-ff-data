@@ -102,57 +102,69 @@ Demo of firebase
     firebase deploy
     ```
 
-#### 2.3 使用 RemoteConfig
+#### 3.2 使用 RemoteConfig
+
+##### 3.2.1 Firebase 的設定
 
 1. 先到 Firebase Project 中增加一個 `version` 的字串設定值
-2. 在 Flutter 專案中加入 `firebase_remote_config`
+
+##### 3.2.2 Flutter 的程式碼變動
+
+###### A. 專案環境更新
+
+1. 在 Flutter 專案中加入 `firebase_remote_config`
     - 指令
     ```shell
     flutter pub add firebase_remote_config
     ```
-3. 到 `main.dart` 加入以下程式
-    - 增加一個全域變數 `remoteConfig`
-      ```dart
-      // 在 main function 上面加入全域變數
-      late FirebaseRemoteConfig remoteConfig;
 
-      Future<void> main() async { 
-          //...
-      }
-      ``` 
-    - 加入 remote config 的初式化函式
-      ```dart
-      Future<void> main() async { 
-          //...
+###### B. `main.dart`
+
+1. 增加一個全域變數 `remoteConfig`
+    ```dart
+    // 在 main function 上面加入全域變數
+    late FirebaseRemoteConfig remoteConfig;
+
+    Future<void> main() async { 
+        //...
+    }
+    ``` 
+
+2. 加入 remote config 的初式化函式
+    ```dart
+      Future<void> main() async {
+      //...
       }
       // 加在 main function 下方
       _initialRemoteConfig() async {  
-        await remoteConfig.setConfigSettings(RemoteConfigSettings(
-          fetchTimeout: const Duration(minutes: 1),
-          minimumFetchInterval: const Duration(hours: 1),
-        ));
-        await remoteConfig.setDefaults(const {
-          "version": "0.1.0",
-        });
-        await remoteConfig.fetchAndActivate();
+      await remoteConfig.setConfigSettings(RemoteConfigSettings(
+      fetchTimeout: const Duration(minutes: 1),
+      minimumFetchInterval: const Duration(hours: 1),
+      ));
+      await remoteConfig.setDefaults(const {
+      "version": "0.1.0",
+      });
+      await remoteConfig.fetchAndActivate();
       }
-      ```
-    - 於 main() 中初始化
-      ```dart
-      Future<void> main() async {
-          //... 
-          remoteConfig = FirebaseRemoteConfig.instance;
-          await _initialRemoteConfig();
-          
-          runApp(const MyApp());
-      }
-      
-      _initialRemoteConfig() async {  
-        //...
-      }
-      ```
-4. 到 `home_page.dart` 中加入以下程式
-    - 在 _HomePageState 中，加入變數呼叫
+    ```
+3. 於 main() 中初始化
+    ```dart
+    Future<void> main() async {
+    //...
+    remoteConfig = FirebaseRemoteConfig.instance;
+    await _initialRemoteConfig();
+
+            runApp(const MyApp());
+        }
+        
+        _initialRemoteConfig() async {  
+          //...
+    }
+    ```
+
+###### C. `home_page.dart`
+
+    1. 在 _HomePageState 中，加入變數呼叫
       ```dart
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
@@ -160,4 +172,73 @@ Demo of firebase
         });
       });
       ``` 
-      
+
+#### 3.3 使用 Realtime Database
+
+#### 3.3.1 Firebase 的設定
+
+1. 先到 Firebase Project 中增加一個 `counter` 的數值
+2. 先確認規則(rule)，測試開發階段先開啟，日後要記得調回來
+
+      ```json
+      {
+      /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+        "rules": {
+          ".read": true,
+          ".write": true
+        }
+      }
+      ```
+
+#### 3.3.2 Flutter 的程式碼變動
+
+###### A. 專案環境更新
+
+1. 設定完畢後，回到 Flutter 專案來執行 firebase_opetions 更新
+    - 指令
+    ```shell
+    flutterfire configure
+    ```
+2. 為專案加入 `firebase_database`
+    - 指令
+       ```shell
+       flutter pub add firebase_database
+       ```
+
+###### B. `home_page.dart`
+
+1. 取出資料
+    - 加入 `_getCounterFromRealtimeDatabase`
+      ```dart
+      _getCounterFromRealtimeDatabase() async {
+        DatabaseReference ref = FirebaseDatabase.instance.ref();
+        final snapshot = await ref.child("counter").get();
+        if (snapshot.exists) {
+          setState(() {
+            _counter = snapshot.value as int;
+          });
+        }
+      }
+      ``` 
+    - 於 initState() 中加入呼叫
+      ```dart
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _version = remoteConfig.getString("version");
+        });
+        // 加入呼叫
+        _getCounterFromRealtimeDatabase();
+      });
+      ``` 
+2. 更新資料
+    - 在 _increaseCounter() 中加入下方程式碼
+       ```dart
+       WidgetsBinding.instance.addPostFrameCallback((_) {
+         setState(() {
+           _version = remoteConfig.getString("version");
+         });
+         // 加入更新
+         DatabaseReference ref = FirebaseDatabase.instance.ref();
+         ref.child("counter").update({"counter": _counter});
+       });
+       ``` 
