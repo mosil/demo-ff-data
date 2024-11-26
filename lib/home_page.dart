@@ -86,6 +86,6 @@ class _HomePageState extends State<HomePage> {
       _counter++;
     });
     DatabaseReference ref = FirebaseDatabase.instance.ref();
-    ref.child("counter").update({"counter": _counter});
+    ref.update({"counter": _counter});
   }
 }
