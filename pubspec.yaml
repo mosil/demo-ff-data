@@ -1,4 +1,4 @@
-name: firebase_database
+name: firebase_database_demo
 description: "Demo of firebase"
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
