@@ -11,9 +11,9 @@ Demo of firebase
 #### 1.1 Firebase tools
 
 - 安裝指令
-   ```shell
-   npm install -g firebase-tools
-   ``` 
+    ```shell
+    npm install -g firebase-tools
+    ``` 
 - 如果版本不符，會看到類似如下截圖
 
   ![update npm version](docs/npm-version-notice.png)
@@ -21,18 +21,18 @@ Demo of firebase
 #### 1.2 FlutterFire CLI
 
 - 安裝指令
-  ```shell
-  dart pub global activate flutterfire_cli
-  ```
+    ```shell
+    dart pub global activate flutterfire_cli
+    ```
 
 ### 2. 使用
 
 #### 2.1 登入 Firebase
 
 - 指令
-   ```shell
-   firebase login
-   ```
+    ```shell
+    firebase login
+    ```
 
 - 登入可能有兩種狀況
     - 登入方式一：可以在本地端直接以瀏覽器同步登入
@@ -59,6 +59,8 @@ Demo of firebase
 
 #### 2.2 設定 Flutter 專案
 
+###### A. 專案環境更新
+
 1. 設定 對應的 Firebase 專案
 
     - 指令
@@ -73,11 +75,24 @@ Demo of firebase
        flutter pub add firebase_core
        ```
 
-3. 回到 `main.dart` 加 import
+###### B. `main.dart`
+
+1. 在 main function 中加入以下程式碼
+    ```dart
+    Future<void> main() async {
+        WidgetsFlutterBinding.ensureInitialized();
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+   
+        runApp(const MyApp());
+    }
+    ```
+2. 新增 import
 
    ```dart
    import 'package:firebase_core/firebase_core.dart';
-   import 'package:firebase_database/firebase_options.dart';
+   import 'package:firebase_database_demo/firebase_options.dart';
    ```
 
 ### 3 使用 Firebase 的功能
@@ -152,10 +167,10 @@ Demo of firebase
 3. 於 main() 中初始化
     ```dart
     Future<void> main() async {
-    //...
-    remoteConfig = FirebaseRemoteConfig.instance;
+      //...
+      remoteConfig = FirebaseRemoteConfig.instance;
       await _initialRemoteConfig();
-            runApp(const MyApp());
+      runApp(const MyApp());
     }
         
     _initialRemoteConfig() async {  
